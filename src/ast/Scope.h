@@ -6,19 +6,21 @@
 #define TYPESCRIPT_NATIVE_SCOPE_H
 
 #include <vector>
+#include <memory>
 #include "ASTNode.h"
 #include "expression/Variable.h"
 
 using std::string;
 using std::vector;
+using std::unique_ptr;
 
 class FunctionNode;
 
 class Scope: public ASTNode {
 public:
-    vector<FunctionNode*> functions;
-    vector<Variable*> variables;
-    vector<ASTNode*> commands;
+    vector<unique_ptr<FunctionNode>> functions;
+    vector<unique_ptr<Variable>> variables;
+    vector<unique_ptr<ASTNode>> commands;
 };
 
 

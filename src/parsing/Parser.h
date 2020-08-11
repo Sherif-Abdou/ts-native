@@ -13,6 +13,7 @@
 #include "../ast/expression/Expression.h"
 
 using std::stack;
+using std::unique_ptr;
 
 class Parser {
 private:
@@ -20,8 +21,8 @@ private:
 
     Token next();
 
-    vector<Scope *> scope_stack;
-    Scope *root;
+    vector<Scope*> scope_stack;
+    unique_ptr<Scope> root;
     void parse_fun();
     void parse_let();
     Expression* parse_exp();

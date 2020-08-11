@@ -11,9 +11,9 @@
 
 Parser::Parser(Lexer lexer)
     :lexer(std::move(lexer)) {
-    this->root = new RootScope();
+    this->root = std::make_unique<RootScope>();
     this->scope_stack = vector<Scope*>();
-    this->scope_stack.push_back(this->root);
+    this->scope_stack.push_back(this->root.get());
 }
 
 void Parser::parse() {
@@ -42,7 +42,7 @@ Token Parser::next() {
 
 void Parser::parse_fun() {
     Token token = this->next();
-    auto * func = new FunctionNode();
+    auto func = std::make_unique<FunctionNode>();
     if (token.type == TokenType::token_iden) {
         func->setName(token.raw_iden);
     }
@@ -55,18 +55,20 @@ void Parser::parse_fun() {
         throw InvalidToken();
     }
     token = this->next();
-    this->top()->functions.push_back(func);
+
+    auto * func_tmp = func.get();
+    this->top()->functions.push_back(std::move(func));
     if (token.type == TokenType::token_open_curly) {
-        this->scope_stack.push_back(static_cast<Scope*>(func));
+        this->scope_stack.push_back(static_cast<Scope*>(func_tmp));
     } else if (token.type == TokenType::token_eol || token.type == TokenType::token_eof) {
-        func->setDeclare(true);
+        func_tmp->setDeclare(true);
     } else {
         throw InvalidToken();
     }
 }
 
 Scope *Parser::getRoot() const {
-    return root;
+    return this->root.get();
 }
 
 void Parser::parse_let() {
@@ -77,8 +79,10 @@ void Parser::parse_let() {
     Variable* variable;
     string name = token.raw_iden;
     if (!(variable = this->search_variable(token.raw_iden))) {
-        variable = new Variable();
-        variable->setName(name);
+        auto new_variable = std::make_unique<Variable>();
+        new_variable->setName(name);
+        variable = new_variable.get();
+        this->top()->variables.push_back(std::move(new_variable));
     }
     token = this->next();
     if (token.type != TokenType::token_equal) {
@@ -86,9 +90,9 @@ void Parser::parse_let() {
     }
     Expression* exp = this->parse_exp();
 
-    auto* letNode = new LetNode(variable, exp);
+    unique_ptr<LetNode> letNode = std::make_unique<LetNode>(variable, exp);
 
-    this->top()->commands.push_back(letNode);
+    this->top()->commands.push_back(std::move(letNode));
 }
 
 Expression* Parser::parse_exp() {
@@ -114,11 +118,12 @@ Scope *Parser::top() {
 Variable *Parser::search_variable(string name) {
     Variable* output = nullptr;
     std::for_each(this->scope_stack.crbegin(), this->scope_stack.crend(), [&](const Scope* scope){
-        std::for_each(scope->variables.begin(), scope->variables.end(), [&](Variable* var) {
+        for (int i = 0; i < scope->variables.size(); i++) {
+            auto var = scope->variables[i].get();
             if (var->getName() == name) {
                 output = var;
             }
-        });
+        }
     });
     return output;
 }

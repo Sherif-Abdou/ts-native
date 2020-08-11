@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(test_parser_variable) {
     Scope* root = parser.getRoot();
     BOOST_TEST(root != nullptr);
     BOOST_TEST(root->commands.size() == 1);
-    auto * casted = dynamic_cast<LetNode*>(root->commands[0]);
+    auto * casted = dynamic_cast<LetNode*>(root->commands[0].get());
     BOOST_TEST(casted != nullptr);
     Variable* var = casted->getVariable();
     BOOST_TEST(var->getName() == "x");
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(test_parser_function_scope) {
     Scope* root = parser.getRoot();
     BOOST_TEST(root != nullptr);
     BOOST_TEST(root->functions.size() == 1);
-    auto * casted = dynamic_cast<FunctionNode*>(root->functions[0]);
+    auto * casted = dynamic_cast<FunctionNode*>(root->functions[0].get());
     BOOST_TEST(casted != nullptr);
     BOOST_TEST(casted->getName() == "main");
 }

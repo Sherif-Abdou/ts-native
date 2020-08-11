@@ -9,7 +9,7 @@ LetNode::LetNode(Variable* variable, Expression* value)
 }
 
 Expression * LetNode::getValue() const {
-    return value;
+    return value.get();
 }
 
 Variable *LetNode::getVariable() const {
@@ -17,6 +17,6 @@ Variable *LetNode::getVariable() const {
 }
 
 
-void LetNode::setValue(Expression *value) {
-    LetNode::value = value;
+void LetNode::setValue(const Expression &value) {
+    *LetNode::value = value;
 }
