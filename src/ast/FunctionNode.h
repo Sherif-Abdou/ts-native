@@ -14,6 +14,12 @@ using std::string;
 class FunctionNode: public Scope {
 private:
     string name;
+    bool declare = false;
+public:
+    bool isDeclare() const;
+
+    void setDeclare(bool declare);
+
 public:
     const string &getName() const;
 

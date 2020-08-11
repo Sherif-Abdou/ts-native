@@ -40,4 +40,18 @@ BOOST_AUTO_TEST_CASE(test_parser_variable) {
     BOOST_TEST(constant->integer == 2);
 }
 
-BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_CASE(test_parser_function_scope) {
+    Lexer lexer = Lexer("fun main() {\n let y = 3 \n }");
+    Parser parser = Parser(lexer);
+
+    parser.parse();
+
+    Scope* root = parser.getRoot();
+    BOOST_TEST(root != nullptr);
+    BOOST_TEST(root->functions.size() == 1);
+    auto * casted = dynamic_cast<FunctionNode*>(root->functions[0]);
+    BOOST_TEST(casted != nullptr);
+    BOOST_TEST(casted->getName() == "main");
+}
+
+BOOST_AUTO_TEST_SUITE_END();

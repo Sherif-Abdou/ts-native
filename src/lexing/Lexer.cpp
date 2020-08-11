@@ -6,10 +6,16 @@
 
 Lexer::Lexer(std::string str)
     :str(std::move(str)) {
-
+    this->backlog = std::queue<Token>();
 }
 
 Token Lexer::next() {
+    if (!this->backlog.empty()) {
+        auto top_token = this->backlog.back();
+        this->backlog.pop();
+        return top_token;
+    }
+
     if (this->str.empty()) {
         return Token(TokenType::token_eof, "");
     }
@@ -69,4 +75,8 @@ char Lexer::pop() {
     char c = this->str[0];
     this->str.erase(0, 1);
     return c;
+}
+
+void Lexer::add_back(const Token& token) {
+    this->backlog.push(token);
 }

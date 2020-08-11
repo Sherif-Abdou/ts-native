@@ -26,6 +26,9 @@ void Parser::parse() {
             case token_let:
                 this->parse_let();
                 break;
+            case token_close_curly:
+                this->scope_stack.pop_back();
+                break;
             default:
                 break;
        }
@@ -51,8 +54,15 @@ void Parser::parse_fun() {
     if (token.type != TokenType::token_close_parenth) {
         throw InvalidToken();
     }
+    token = this->next();
     this->top()->functions.push_back(func);
-    this->scope_stack.push_back(static_cast<Scope*>(func));
+    if (token.type == TokenType::token_open_curly) {
+        this->scope_stack.push_back(static_cast<Scope*>(func));
+    } else if (token.type == TokenType::token_eol || token.type == TokenType::token_eof) {
+        func->setDeclare(true);
+    } else {
+        throw InvalidToken();
+    }
 }
 
 Scope *Parser::getRoot() const {

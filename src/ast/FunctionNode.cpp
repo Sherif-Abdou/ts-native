@@ -11,3 +11,11 @@ const string &FunctionNode::getName() const {
 void FunctionNode::setName(const string &name) {
     this->name = name;
 }
+
+bool FunctionNode::isDeclare() const {
+    return declare;
+}
+
+void FunctionNode::setDeclare(bool declare) {
+    FunctionNode::declare = declare;
+}
