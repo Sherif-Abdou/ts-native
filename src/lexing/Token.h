@@ -15,7 +15,11 @@ enum TokenType {
     token_fun = -5,
     token_open_parenth = -6,
     token_close_parenth = -7,
-    token_comma = -8
+    token_comma = -8,
+    token_equal = -9,
+    token_let = -10,
+    token_open_curly = -11,
+    token_close_curly = -12
 };
 
 struct Token {

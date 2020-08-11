@@ -27,6 +27,12 @@ Token Lexer::next() {
         return Token(TokenType::token_close_parenth, ")");
     } else if (c == ',') {
         return Token(TokenType::token_comma, ",");
+    } else if (c == '=') {
+        return Token(TokenType::token_equal, "=");
+    } else if (c == '{') {
+        return Token(TokenType::token_open_curly, "{");
+    } else if (c == '}') {
+        return Token(TokenType::token_close_curly, "}");
     }
 
     std::string iden = "";
@@ -52,6 +58,8 @@ Token Lexer::next() {
 
     if (iden == "fun") {
         return Token(TokenType::token_fun, "\n");
+    } else if (iden == "let") {
+        return Token(TokenType::token_let, "let");
     } else {
         return Token(TokenType::token_iden, iden);
     }
